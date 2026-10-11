@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Hairstyle Recommendation System</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 30px;
+        }
+
+        video {
+            max-width: 100%;
+            border: 2px solid #333;
+            border-radius: 8px;
+        }
+
+        button {
+            padding: 12px 20px;
+            margin: 15px;
+            cursor: pointer;
+        }
+
+        #feedback, #recommendation {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Hairstyle Recommendation System</h1>
+
+    <p>Capture your photo to receive a face-shape prediction.</p>
+
+    <video id="video" width="640" height="480"
+           autoplay playsinline></video>
+
+    <br>
+
+    <button id="capture-btn">Capture Photo</button>
+
+    <div id="feedback"></div>
+
+    <div id="recommendation"></div>
+
+    <script>
+        const video = document.getElementById("video");
+        const button = document.getElementById("capture-btn");
+        const feedback = document.getElementById("feedback");
+        const recommendation =
+            document.getElementById("recommendation");
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+            })
+            .catch(error => {
+                feedback.textContent =
+                    "Unable to access webcam: " + error.message;
+            });
+
+        button.addEventListener("click", async () => {
+            if (!video.videoWidth) {
+                feedback.textContent =
+                    "Please wait for the webcam to start.";
+                return;
+            }
+
+            button.disabled = true;
+            feedback.textContent = "Capturing photo...";
+            recommendation.textContent = "";
+
+            const canvas = document.createElement("canvas");
+            canvas.width = 640;
+            canvas.height = 480;
+
+            const context = canvas.getContext("2d");
+
+            context.drawImage(video, 0, 0, 640, 480);
+
+            canvas.toBlob(async blob => {
+                if (!blob) {
+                    feedback.textContent =
+                        "Could not capture the photo.";
+                    button.disabled = false;
+                    return;
+                }
+
+                const formData = new FormData();
+
+                formData.append(
+                    "image",
+                    new File([blob], "captured_photo.jpg", {
+                        type: "image/jpeg"
+                    })
+                );
+
+                try {
+                    feedback.textContent =
+                        "Photo captured. Processing...";
+
+                    const response = await fetch(
+                        "/capture_and_recommend/",
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(
+                            data.error || "Processing failed."
+                        );
+                    }
+
+                    feedback.textContent =
+                        data.message + " Predicted face shape: " +
+                        data.face_shape;
+
+                    const heading =
+                        document.createElement("h2");
+
+                    heading.textContent =
+                        "Hairstyle Recommendations";
+
+                    recommendation.appendChild(heading);
+
+                    const list = document.createElement("ul");
+
+                    data.recommendations.forEach(style => {
+                        const item =
+                            document.createElement("li");
+
+                        item.textContent = style;
+                        list.appendChild(item);
+                    });
+
+                    recommendation.appendChild(list);
+
+                } catch (error) {
+                    feedback.textContent = error.message;
+                } finally {
+                    button.disabled = false;
+                }
+            }, "image/jpeg", 0.9);
+        });
+    </script>
+
+</body>
+</html>
