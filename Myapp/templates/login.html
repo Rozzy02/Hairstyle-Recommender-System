@@ -1,0 +1,91 @@
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Login | Hairstyle Recommendation System</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f6f9;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+    }
+
+    .login-container {
+        background: white;
+        width: 320px;
+        max-width: calc(100% - 60px);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        text-align: center;
+        color: #333;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        margin: 8px 0;
+        box-sizing: border-box;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        background: #6c3fc5;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #512da8;
+    }
+
+    .error {
+        color: #c62828;
+    }
+</style>
+
+</head><body>
+    <div class="login-container">
+        <h2>Welcome Back</h2>    <form method="post">
+        {% csrf_token %}
+
+        {% if form.errors %}
+            <p class="error">
+                Please check your username and password.
+            </p>
+        {% endif %}
+
+        <label for="username">Username</label>
+        <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Enter username"
+            required
+        >
+
+        <label for="password">Password</label>
+        <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter password"
+            required
+        >
+
+        <button type="submit">Login</button>
+    </form>
+</div>
+
+</body>
+</html>
