@@ -61,9 +61,15 @@ Future Improvements
 - Improve the user interface and overall user experience.
 - Deploy the application online for easier access.
 
+Development Status
+
+This project was developed as a Bachelor of Science in Computer Science project at Alupe University.
+
+The system uses Django, Python, OpenCV, TensorFlow/Keras, CNN, and SIFT techniques to classify facial shapes and suggest hairstyles.
+
+Current status: The source code and project documentation are being organized in this repository. The trained model and remaining application components still need to be added and tested before the complete application can be demonstrated.
+
 Author
 
 Rosemary Khalili Mwaka
-
-Bachelor's Degree in Computer Science
-Alupe University, 2024
+Bachelor's Degree in Computer Science, Alupe University (2024)
